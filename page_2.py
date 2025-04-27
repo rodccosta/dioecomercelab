@@ -1,4 +1,6 @@
 import streamlit as st
+from myjson import *
+from utils import *
 
 st.markdown("# Cadastrar novo produto ➕")
 st.sidebar.markdown("# Novo Produto ➕")
@@ -9,29 +11,14 @@ description = st.text_area("Descrição do Produto")
 price = st.number_input("Preço do Produto", min_value=0.0, format="%.2f")
 #filetype = st.select_slider("Escolha a fonte da imagem", options=["URL","Selecionar Arquivo",])
 filetype = st.pills(
-    "Envio de Arquivos",
+    "Selecione o tipo de Envio de Imagem",
     ["URL","Selecionar Arquivo",],
         selection_mode="single")
 if filetype == "URL":
     uploaded_file = st.text_input("Link da Imagem do Produto")
-else:
-    uploaded_file = st.file_uploader("Imagem do Produto", type=["png", "jpg", "jpeg"])
+elif filetype == "Selecionar Arquivo":
+    uploaded_file = st.file_uploader("Imagem do Produto", type=["png", "jpg", "jpeg"],accept_multiple_files =False)
 
-
-
-
-def load_json_file():
-    import json
-    with open('products.json') as f:
-        products = json.load(f)
-    return products
-
-def write_json_file(products):
-    import json    
-    # the json file where the output must be stored
-    out_file = open("products.json", "w")
-    json.dump(products, out_file, indent = 6)
-    out_file.close()
 
 if st.button("Cadastrar Produto"):
 
@@ -41,8 +28,10 @@ if st.button("Cadastrar Produto"):
     else:
         # Anexa a lista do arquivo.
         image_url = ""
-        if uploaded_file is not None:
-            print(uploaded_file)
+        if filetype == "URL":
+            image_url = uploaded_file 
+        elif uploaded_file is not None:
+            image_url = str(gerar_data_uri(uploaded_file.getvalue(),mime_type=uploaded_file.type))
         
         # Dados do produto
         product_data = {
@@ -52,4 +41,5 @@ if st.button("Cadastrar Produto"):
             "imagem_url": image_url
         }
         products.append(product_data)
-        write_json_file(products)
+        product_data_ordenado = sorted(products, key=lambda x: x['nome'])
+        write_json_file(product_data_ordenado)

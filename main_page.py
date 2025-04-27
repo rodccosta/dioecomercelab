@@ -1,4 +1,5 @@
 import streamlit as st
+from myjson import *
 
 # Main page content
 st.markdown("# Produtos Disponíveis - E-Commerce na Cloud🍔")
@@ -23,11 +24,6 @@ def loaddummydata():
     product_data.append(product)
     return product_data
 
-def load_json_file():
-    import json
-    with open('products.json') as f:
-        products = json.load(f)
-    return products
 
 # Função para exibir a lista de produtos na tela   
 def list_produtos_screen():
