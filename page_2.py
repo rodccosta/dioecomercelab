@@ -1,7 +1,7 @@
 import streamlit as st
 from myjson import *
 from utils import *
-
+import uuid
 st.markdown("# Cadastrar novo produto ➕")
 st.sidebar.markdown("# Novo Produto ➕")
 
@@ -31,7 +31,11 @@ if st.button("Cadastrar Produto"):
         if filetype == "URL":
             image_url = uploaded_file 
         elif uploaded_file is not None:
-            image_url = str(gerar_data_uri(uploaded_file.getvalue(),mime_type=uploaded_file.type))
+            object_name = f"{uuid.uuid4()}.jpg" #gera um nome único
+            image_url = adicionar_objetos(object_name,uploaded_file)
+            
+            #image_url = str(gerar_data_uri(uploaded_file.getvalue(),mime_type=uploaded_file.type))
+
         
         # Dados do produto
         product_data = {

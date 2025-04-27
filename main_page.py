@@ -1,10 +1,9 @@
 import streamlit as st
 from myjson import *
-
+from utils import *
 # Main page content
 st.markdown("# Produtos Disponíveis - E-Commerce na Cloud🍔")
 st.sidebar.markdown("# Página Principal 🍔")
-
 
 def loaddummydata():
     product_data=[]
