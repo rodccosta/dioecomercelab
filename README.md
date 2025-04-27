@@ -1,6 +1,10 @@
 # dioecomercelab
 Laboratório do módulo Armazenando dados de um E-Commerce na Cloud
 
+![E-comerce](https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grgdg0txqvhh/b/bucket-test-rod-sp1/o/snaps/github-ecomerce-1resultado1.png)
+![Upload](https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grgdg0txqvhh/b/bucket-test-rod-sp1/o/snaps/github-ecomerce-1resultado2.png)
+
+
 ## Considerações Iniciais
 Na aula do módulo, o professor já começa a fazer toda a codificação e não explica o setup inicial para desenvolver o projeto para resolução do problema, desta forma, neste repositório iremos descrever realizar de forma mais básica o desenvolvimento do projeto realizando a seguinte sequência de passos:
 * [Setup do ambiente de desenvolvimento](#setup)
@@ -9,7 +13,7 @@ Na aula do módulo, o professor já começa a fazer toda a codificação e não 
 * [Carregamento de credenciais em arquivo .env](#dotenv)
 * [Troca de Azure Blobs por OCI Bucket Objects](#oci)
 
-Além disto, a DIO não oferece contas de usuário para realizar o laboratório com conexão da azure. Como possuo conta na ([Oracle Cloud Infrastructure - OCI](https://cloud.oracle.com/) e minha conta é always free, então vou utilizar esta nuvem para 
+Além disto, a DIO não oferece contas de usuário para realizar o laboratório com conexão da azure. Como possuo conta na ([Oracle Cloud Infrastructure - OCI](https://cloud.oracle.com/) e minha conta é always free, então vou utilizar esta nuvem para este laboratório.
 
 ### Setup do ambiente de desenvolvimento
 O projeto é desenvolvido em Python utilizando o vscode, além disso, o projeto utiliza algumas dependências, apresentadas no arquivo requeriments.txt. Para simplificação da instalação utilizamos a ferramenta [Chocolatey](https://chocolatey.org) no windows utilizando o comando:
@@ -89,17 +93,39 @@ A partir deste cliente, usamos os comandos para interagir com o bucket:
 * object_storage_client.put_object(namespace,bucket_name,filename,content): envia o arquivo para o bucket.
 
 ### Banco na OCI - Autonomous
-Na OCI o SQL é um pouco diferente:
+Na OCI A criação SQL é um pouco diferente:
 ```
 CREATE TABLE Produtos (
-            id INT NOT NULL PRIMARY KEY,
+            id NUMBER GENERATED ALWAYS as IDENTITY(START with 1 INCREMENT by 1),
             nome VARCHAR(255),
             descricao VARCHAR(2000),
-            preco DECIMAL(18,2),
+            preco FLOAT,
             imagem_url VARCHAR(2083)
         )
-``` 
+```
+Similarmente ao serviço de bucket, o AUTONOMOUS DATABASE SERVICE da OCI precisa de variáveis de ambiente a serem configuradas no .env
+```
+SQL_USERNAME=....
+SQL_PASSWORD=....
+SQL_CONSTRING=(description= ....
+```
+As funções para interação com o banco de dados estão disponíveis no arquivo ocisql.py. Foi necessário ir nas configurações do banco de dados e incluir o IP público que estamos acessando para poder permitir as conexões no banco de dados. Além disto, foi desabilitado o mTSL para facilitar o processo de carregamento das informações pela biblioteca oracledb.
+
+```Python
+import oracledb
+import os
+from dotenv import load_dotenv
+SQL_USERNAME = os.getenv('SQL_USERNAME')
+SQL_PASSWORD = os.getenv('SQL_PASSWORD')
+SQL_CONSTRING =os.getenv('SQL_CONSTRING')
+oracledb.init_oracle_client()
+conn = oracledb.connect(user=SQL_USERNAME, password=SQL_PASSWORD,dsn=SQL_CONSTRING)#, dsn=dsn_tns, config_dir=wallet_location, wallet_location=wallet_location, wallet_password=SQL_PASSWORD)
+cursor = conn.cursor()
+```
+A partir destas informações, foram criadas duas funções
+* `insert_product_sql(product_data)`: inserir produto no banco de dados da nuvem
+* `list_products_sql()`: listar produtos no banco de dados da nuvem
 ## Histórico de versões
 * Versão 1: Persistência em Arquivo JSON com imagens armazenadas em JSON.
 * Versão 2: Persistência em Arquivo JSON com imagens armazenadas em Bucket.
-* Versão 3 [TODO]: Persistência em SQL com imagens armazenadas em Bucket.
+* Versão 3: Persistência em SQL com imagens armazenadas em Bucket.
