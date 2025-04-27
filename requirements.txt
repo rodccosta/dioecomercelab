@@ -3,3 +3,4 @@ oci
 json
 dotenv
 uuid
+pymssql

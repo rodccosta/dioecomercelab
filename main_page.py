@@ -1,6 +1,7 @@
 import streamlit as st
 from myjson import *
 from utils import *
+from ocisql import *
 # Main page content
 st.markdown("# Produtos Disponíveis - E-Commerce na Cloud🍔")
 st.sidebar.markdown("# Página Principal 🍔")
@@ -26,7 +27,8 @@ def loaddummydata():
 
 # Função para exibir a lista de produtos na tela   
 def list_produtos_screen():
-        products = load_json_file()#loaddummydata()#list_products_sql()
+        #products = load_json_file()#loaddummydata()#
+        products = list_products_sql()
         if products:
         # Define o número de cards por linha
             cards_por_linha = 3

@@ -88,7 +88,17 @@ A partir deste cliente, usamos os comandos para interagir com o bucket:
 * object_storage_client.list_objects(namespace, bucket_name,  fields="name,timeCreated,size") : lista os arquivos presentes no bucket
 * object_storage_client.put_object(namespace,bucket_name,filename,content): envia o arquivo para o bucket.
 
-
+### Banco na OCI - Autonomous
+Na OCI o SQL é um pouco diferente:
+```
+CREATE TABLE Produtos (
+            id INT NOT NULL PRIMARY KEY,
+            nome VARCHAR(255),
+            descricao VARCHAR(2000),
+            preco DECIMAL(18,2),
+            imagem_url VARCHAR(2083)
+        )
+``` 
 ## Histórico de versões
 * Versão 1: Persistência em Arquivo JSON com imagens armazenadas em JSON.
 * Versão 2: Persistência em Arquivo JSON com imagens armazenadas em Bucket.

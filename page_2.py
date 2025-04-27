@@ -1,6 +1,7 @@
 import streamlit as st
 from myjson import *
 from utils import *
+from ocisql import *
 import uuid
 st.markdown("# Cadastrar novo produto ➕")
 st.sidebar.markdown("# Novo Produto ➕")
@@ -44,6 +45,12 @@ if st.button("Cadastrar Produto"):
             "preco": price,
             "imagem_url": image_url
         }
-        products.append(product_data)
-        product_data_ordenado = sorted(products, key=lambda x: x['nome'])
-        write_json_file(product_data_ordenado)
+        try:
+            insert_product_sql(product_data)
+            st.success("Produto cadastrado com sucesso no OCI SQL!")
+        except Exception as e:
+            st.error(f"Erro ao inserir no OCI SQL: {e}")
+
+        #products.append(product_data)
+        #product_data_ordenado = sorted(products, key=lambda x: x['nome'])
+        #write_json_file(product_data_ordenado)
