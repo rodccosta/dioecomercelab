@@ -1,6 +1,10 @@
 # dioecomercelab
 Laboratório do módulo Armazenando dados de um E-Commerce na Cloud
 
+![E-comerce](https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grgdg0txqvhh/b/bucket-test-rod-sp1/o/snaps/github-ecomerce-1resultado1.png)
+![Upload](https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grgdg0txqvhh/b/bucket-test-rod-sp1/o/snaps/github-ecomerce-1resultado2.png)
+
+
 ## Considerações Iniciais
 Na aula do módulo, o professor já começa a fazer toda a codificação e não explica o setup inicial para desenvolver o projeto para resolução do problema, desta forma, neste repositório iremos descrever realizar de forma mais básica o desenvolvimento do projeto realizando a seguinte sequência de passos:
 * [Setup do ambiente de desenvolvimento](#setup)
