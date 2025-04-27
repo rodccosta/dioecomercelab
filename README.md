@@ -6,6 +6,10 @@ Na aula do módulo, o professor já começa a fazer toda a codificação e não 
 * [Setup do ambiente de desenvolvimento](#setup)
 * [Desenvolvimento da interface para envio de produto](#stramlit)
 * [Persistência em Arquivo](#json)
+* [Carregamento de credenciais em arquivo .env](#dotenv)
+* [Troca de Azure Blobs por OCI Bucket Objects](#oci)
+
+Além disto, a DIO não oferece contas de usuário para realizar o laboratório com conexão da azure. Como possuo conta na ([Oracle Cloud Infrastructure - OCI](https://cloud.oracle.com/) e minha conta é always free, então vou utilizar esta nuvem para 
 
 ### Setup do ambiente de desenvolvimento
 O projeto é desenvolvido em Python utilizando o vscode, além disso, o projeto utiliza algumas dependências, apresentadas no arquivo requeriments.txt. Para simplificação da instalação utilizamos a ferramenta [Chocolatey](https://chocolatey.org) no windows utilizando o comando:
@@ -49,8 +53,43 @@ Para persistência das imagens, foi feita a conversão da imagem para data_uri u
 ```python
 gerar_data_uri(uploaded_file.getvalue(),mime_type=uploaded_file.type))
 ```
+### Carregamento de credenciais em arquivo .env
+O código criado deixa hard coded informações de credenciais de acessso a nuvem. Desta forma, foi utilizado o arquivo .env para deixar as credenciais criadas. Para usar este repositório você deve criar um arquivo.env com o seguinte conteúdo:
+```sh
+TENANCY_OCID=ocid1.tenancy.oc1...
+USER_OCID=ocid1.user.oc1...
+BUCKET_OCID=ocid1.bucket.oc1...
+FINGERPRINT=XX:XX:XX:XX:XX:XX:XX:XX:XX::XX:XX:XX:XX:XX:XX
+PRIVATE_KEY_PATH=./filekey.pem
+REGION=......
+BUCKET_NAME=....
+```
+No arquivo utils.py essas informçaões são carregadas e são colocadas no formato de configuração solicitado pela OCI.
+
+### Interagindo com a OCI
+A interação com os buckets OCI é mais simples que a Azure Blob, para isto, devemos carregar as informações de conexão usando os comandos:
+```python
+from dotenv import load_dotenv
+# Carrega variáveis do arquivo .env
+load_dotenv()
+
+config = {
+    "user": os.getenv('USER_OCID'),
+    "fingerprint": os.getenv('FINGERPRINT'),
+    "key_file": os.getenv('PRIVATE_KEY_PATH'),
+    "tenancy": os.getenv('TENANCY_OCID'),
+    "region": os.getenv('REGION')
+}
+import oci
+# Cria o cliente de objetos
+object_storage_client = oci.object_storage.ObjectStorageClient(config)
+```
+A partir deste cliente, usamos os comandos para interagir com o bucket:
+* object_storage_client.list_objects(namespace, bucket_name,  fields="name,timeCreated,size") : lista os arquivos presentes no bucket
+* object_storage_client.put_object(namespace,bucket_name,filename,content): envia o arquivo para o bucket.
+
 
 ## Histórico de versões
 * Versão 1: Persistência em Arquivo JSON com imagens armazenadas em JSON.
-* Versão 2 [TODO]: Persistência em Arquivo JSON com imagens armazenadas em Bucket.
+* Versão 2: Persistência em Arquivo JSON com imagens armazenadas em Bucket.
 * Versão 3 [TODO]: Persistência em SQL com imagens armazenadas em Bucket.
