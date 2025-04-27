@@ -43,7 +43,8 @@ def list_produtos_screen():
                     st.markdown(f"### {product['nome']}")
                     st.write(f"**Descrição:** {product['descricao']}")
                     st.write(f"**Preço:** R$ {product['preco']:.2f}")
-                    st.image(product["imagem_url"],use_container_width=False)
+                    if product["imagem_url"]:
+                        st.image(product["imagem_url"],use_container_width=False)
                     st.markdown("---")
                 # A cada 'cards_por_linha' produtos, se ainda houver produtos, cria novas colunas
                 if (i + 1) % cards_por_linha == 0 and (i + 1) < len(products):
