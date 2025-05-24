@@ -2,6 +2,7 @@ import streamlit as st
 from myjson import *
 from utils import *
 from ocisql import *
+#from streamlit_js_eval import streamlit_js_eval
 # Main page content
 st.markdown("# Produtos Disponíveis - E-Commerce na Cloud🍔")
 st.sidebar.markdown("# Página Principal 🍔")
@@ -42,6 +43,17 @@ def list_produtos_screen():
                     st.write(f"**Preço:** R$ {product['preco']:.2f}")
                     if product["imagem_url"]:
                         st.image(product["imagem_url"],use_container_width=False)
+                        if st.button("Remover",i,icon='✖️'):
+                            try: 
+                                remove_product_sql(product['nome'])
+                                remover_objeto_por_url_simples(product["imagem_url"])
+                                st.success("produto removido")
+                                st.rerun()
+                                #print(cols[i % cards_por_linha])
+                                #streamlit_js_eval(js_expressions="parent.window.location.reload()")
+                            except Exception as e:
+                                st.error("Erro ao remover")
+
                     st.markdown("---")
                 # A cada 'cards_por_linha' produtos, se ainda houver produtos, cria novas colunas
                 if (i + 1) % cards_por_linha == 0 and (i + 1) < len(products):

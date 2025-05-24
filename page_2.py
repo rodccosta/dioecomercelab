@@ -23,7 +23,7 @@ elif filetype == "Selecionar Arquivo":
 
 if st.button("Cadastrar Produto"):
 
-    products = load_json_file()
+    #products = load_json_file()
     if not product_name or not description or price is None:
         st.warning("Preencha todos os campos obrigatórios!")
     else:
